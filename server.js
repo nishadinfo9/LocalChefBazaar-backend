@@ -14,4 +14,7 @@ connectDB()
       console.log(`listening on port ${port}`);
     })
   )
-  .catch(() => console.log("Database faild"));
+  .catch(() => {
+    console.log("Database faild");
+    process.exit(1);
+  });
