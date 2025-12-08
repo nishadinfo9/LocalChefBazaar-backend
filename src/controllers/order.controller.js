@@ -68,8 +68,8 @@ const getMyOrder = async (req, res) => {
       .sort({ orderTime: -1 })
       .lean();
 
-    if (!orders) {
-      return res.status(404).json({ message: "orders not found" });
+    if (!orders.length) {
+      return res.status(200).json({ message: "orders not found", orders: [] });
     }
 
     return res

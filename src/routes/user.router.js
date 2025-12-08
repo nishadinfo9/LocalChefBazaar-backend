@@ -7,6 +7,7 @@ import {
   loggedIn,
   logout,
   getCurrentUser,
+  getUserProfile,
 } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -17,5 +18,6 @@ router
 router.route("/user/login").post(loggedIn);
 router.route("/user/logout").post(verifyJWT, logout);
 router.route("/user/current-user").get(verifyJWT, getCurrentUser);
+router.route("/user/user-profile").get(verifyJWT, getUserProfile);
 
 export default router;

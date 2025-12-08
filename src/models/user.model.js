@@ -34,6 +34,11 @@ const userSchema = new Schema(
       enum: ["user", "chef", "Admin "],
       default: "user",
     },
+    status: {
+      type: String,
+      enum: ["active", "fraud"],
+      default: "active",
+    },
   },
   { timestamps: true }
 );

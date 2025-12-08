@@ -141,4 +141,22 @@ const getCurrentUser = async (req, res) => {
   }
 };
 
-export { registerUser, loggedIn, logout, getCurrentUser };
+const getUserProfile = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const user = await User.findById(userId).select("-password -refreshToken");
+
+    if (!user) {
+      return res.status(404).json({ message: "user does not exist" });
+    }
+    return res
+      .status(200)
+      .json({ message: "user profile found successfully", user });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export { registerUser, loggedIn, logout, getCurrentUser, getUserProfile };

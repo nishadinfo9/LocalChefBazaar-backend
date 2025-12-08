@@ -68,7 +68,10 @@ const getMyMeals = async (req, res) => {
       .lean();
 
     if (!meals.length) {
-      return res.status(404).json({ message: "Meals not found" });
+      return res.status(200).json({
+        message: "No meals found",
+        meals: [],
+      });
     }
 
     return res
