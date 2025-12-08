@@ -67,8 +67,8 @@ const getMyMeals = async (req, res) => {
       .sort({ createdAt: -1 })
       .lean();
 
-    if (!meals) {
-      return res.status(401).json({ message: "meals does not exist" });
+    if (!meals.length) {
+      return res.status(404).json({ message: "Meals not found" });
     }
 
     return res

@@ -12,38 +12,35 @@ const addFavoriteMeal = async (req, res) => {
       return res.status(400).json({ message: "meal does not exist" });
     }
 
-    const existFavoriteMeal = await Favorite.findOne({ mealId, userEmail });
+    const favorite = await Favorite.findOne({ mealId, userEmail });
 
-    if (existFavoriteMeal) {
-      await Favorite.findByIdAndDelete(existFavoriteMeal._id);
+    if (favorite) {
+      favorite.favorited = !favorite.favorited;
+      await favorite.save();
+
       return res.status(200).json({
-        message: "favorite meal removed successfully",
-        favorited: false,
+        message: favorite.favorited
+          ? "favorite meal added"
+          : "favorite meal removed",
+        favorited: favorite.favorited,
       });
     }
 
-    const newFavorite = {
+    favorite = await Favorite.create({
       mealId: meal._id,
       mealName: meal.foodName,
       chefId: meal.chefId,
       chefName: meal.chefName,
       price: meal.price,
       userEmail,
-    };
+      favorited: true,
+    });
 
-    const favorite = await Favorite.create(newFavorite);
-
-    if (!favorite) {
-      return res.status(401).json({
-        message: "favorite meal creation faild",
-        favorite,
-        favorited: true,
-      });
-    }
-
-    return res
-      .status(201)
-      .json({ message: "favorite meal created successfully", favorite });
+    return res.status(201).json({
+      message: "favorite meal created successfully",
+      favorited: true,
+      favorite,
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Internal server error" });
@@ -53,17 +50,18 @@ const addFavoriteMeal = async (req, res) => {
 const getFavoriteMeal = async (req, res) => {
   try {
     const { mealId } = req.params;
-    console.log(mealId);
+    const userEmail = req.user.email;
 
-    const meal = await Favorite.findOne({ mealId });
+    const favorite = await Favorite.findOne({ mealId, userEmail });
 
-    if (!meal) {
-      return res.status(404).json({ message: "meal not found" });
+    if (!favorite) {
+      return res.status(404).json({ message: "favorite not found" });
     }
 
-    return res
-      .status(200)
-      .json({ message: "favorite meal found successfully", meal });
+    return res.status(200).json({
+      message: "favorite favorite found successfully",
+      favorited: favorite.favorited,
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Internal server error" });

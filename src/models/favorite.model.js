@@ -27,6 +27,11 @@ const favoriteSchema = new Schema(
       type: String,
       required: true,
     },
+    favorited: {
+      type: Boolean,
+      default: false,
+      required: true,
+    },
   },
   { timestamps: true }
 );
