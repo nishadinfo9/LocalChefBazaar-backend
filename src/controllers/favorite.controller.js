@@ -12,7 +12,7 @@ const addFavoriteMeal = async (req, res) => {
       return res.status(400).json({ message: "meal does not exist" });
     }
 
-    const favorite = await Favorite.findOne({ mealId, userEmail });
+    let favorite = await Favorite.findOne({ mealId, userEmail });
 
     if (favorite) {
       favorite.favorited = !favorite.favorited;
