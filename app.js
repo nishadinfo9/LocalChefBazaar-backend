@@ -35,6 +35,7 @@ import reviewMealRoutes from "./src/routes/review.router.js";
 import favoriteMealRoutes from "./src/routes/favorite.router.js";
 import orderRoutes from "./src/routes/order.router.js";
 import paymentRoutes from "./src/routes/payment.router.js";
+import requestRoutes from "./src/routes/request.router.js";
 
 // executions
 app.use("/api/v1", userRoutes);
@@ -43,5 +44,6 @@ app.use("/api/v1", reviewMealRoutes);
 app.use("/api/v1", favoriteMealRoutes);
 app.use("/api/v1", orderRoutes);
 app.use("/api/v1", paymentRoutes);
+app.use("/api/v1", requestRoutes);
 
 export default app;

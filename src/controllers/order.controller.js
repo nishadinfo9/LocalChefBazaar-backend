@@ -80,4 +80,24 @@ const getMyOrder = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
-export { createOrder, getMyOrder };
+
+const updateOrderRequests = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const orders = await Order.find({ chefId: userId });
+
+    if (!orders.length) {
+      return res
+        .status(200)
+        .json({ message: "chef order not found", orders: [] });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "chef order found successfully", orders });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+export { createOrder, getMyOrder, updateOrderRequests };

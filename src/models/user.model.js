@@ -39,6 +39,7 @@ const userSchema = new Schema(
       enum: ["active", "fraud"],
       default: "active",
     },
+    chefId: { type: String },
   },
   { timestamps: true }
 );

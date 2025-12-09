@@ -159,4 +159,58 @@ const getUserProfile = async (req, res) => {
   }
 };
 
-export { registerUser, loggedIn, logout, getCurrentUser, getUserProfile };
+const getAllUsers = async (req, res) => {
+  try {
+    const { role } = req.user;
+    if (role !== "admin") {
+      return res.status(401).json({ message: "Unauthorize access" });
+    }
+    const users = await User.find()
+      .sort({ createdAt: -1 })
+      .lean()
+      .select("-password -refreshToken");
+    if (!users.length) {
+      return res
+        .status(200)
+        .json({ message: "user does not exist", users: [] });
+    }
+
+    return res.status(200).json({ message: "users found successfully", users });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const isFraudUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(409).json({ message: "user does not exist" });
+    }
+
+    const updateUser = await User.findByIdAndUpdate(
+      user._id,
+      { $set: { status: "fraud" } },
+      { new: true }
+    ).select("-password -refreshToken");
+
+    return res
+      .status(200)
+      .json({ message: "fraud user found successfully", updateUser });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export {
+  registerUser,
+  loggedIn,
+  logout,
+  getCurrentUser,
+  getUserProfile,
+  getAllUsers,
+  isFraudUser,
+};

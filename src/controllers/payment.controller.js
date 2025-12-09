@@ -75,7 +75,7 @@ const verifyPaymentSession = async (req, res) => {
 
     const updateOrder = await Order.findOneAndUpdate(
       { foodId: mealId, userEmail: session.customer_email },
-      { $set: { paymentStatus: "paid", orderStatus: "confirmed" } },
+      { $set: { paymentStatus: "paid" } },
       { new: true }
     );
 
