@@ -21,7 +21,7 @@ const createPaymentSession = async (req, res) => {
     }
 
     const session = await stripe.checkout.sessions.create({
-      customer_email: meal.userEmail,
+      customer_email: order.userEmail,
       line_items: [
         {
           price_data: {
@@ -56,27 +56,17 @@ const verifyPaymentSession = async (req, res) => {
   try {
     const { sessionId } = req.params;
 
-    if (!sessionId) {
-      return res.status(404).json({ message: "session id does not exist" });
-    }
-
     const session = await stripe.checkout.sessions.retrieve(sessionId);
-
-    if (!session) {
-      return res
-        .status(404)
-        .json({ message: "verify payment session not found" });
-    }
 
     if (session.payment_status !== "paid") {
       return res.status(409).json({ message: "payment not paid" });
     }
 
+    const transactionId = session.id; // *** FIXED ***
     const mealId = session.metadata.mealId;
-    const transactionId = session.payment_intent;
 
+    // Prevent duplicate
     let payment = await Payment.findOne({ transactionId });
-
     if (payment) {
       return res
         .status(200)
@@ -84,25 +74,20 @@ const verifyPaymentSession = async (req, res) => {
     }
 
     const updateOrder = await Order.findOneAndUpdate(
-      { foodId: mealId },
+      { foodId: mealId, userEmail: session.customer_email },
       { $set: { paymentStatus: "paid", orderStatus: "confirmed" } },
       { new: true }
     );
 
-    if (!updateOrder) {
-      return res.status(404).json({ message: "order not found" });
-    }
-
-    const newPayment = {
-      mealId: session.metadata.mealId,
+    payment = await Payment.create({
+      mealId,
       mealName: updateOrder.mealName,
-      transactionId: session.payment_intent,
+      transactionId, // now stable
       userEmail: session.customer_email,
-      totalPrice: (session.amount_total / 100).toFixed(2),
+      totalPrice: Number((session.amount_total / 100).toFixed(2)),
       currency: session.currency,
-    };
-
-    payment = await Payment.create(newPayment);
+      paymentStatus: "paid",
+    });
 
     return res
       .status(201)
@@ -113,4 +98,26 @@ const verifyPaymentSession = async (req, res) => {
   }
 };
 
-export { createPaymentSession, verifyPaymentSession };
+const getMyPayments = async (req, res) => {
+  try {
+    const userEmail = req.user.email;
+    const payments = await Payment.find({ userEmail })
+      .sort({ paidAt: -1 })
+      .lean();
+
+    if (!payments.length) {
+      return res
+        .status(200)
+        .json({ message: "payment not found", payments: [] });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "payment found successfully", payments });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export { createPaymentSession, verifyPaymentSession, getMyPayments };

@@ -1,6 +1,10 @@
 import mongoose, { Schema } from "mongoose";
 
 const reviewSchema = new Schema({
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
   foodId: {
     type: Schema.Types.ObjectId,
     ref: "Meal",

@@ -1,5 +1,6 @@
 import { Favorite } from "../models/favorite.model.js";
 import { Meal } from "../models/meal.model.js";
+import { User } from "../models/user.model.js";
 
 const addFavoriteMeal = async (req, res) => {
   try {
@@ -29,6 +30,7 @@ const addFavoriteMeal = async (req, res) => {
     favorite = await Favorite.create({
       mealId: meal._id,
       mealName: meal.foodName,
+      foodImage: meal.foodImage,
       chefId: meal.chefId,
       chefName: meal.chefName,
       price: meal.price,
@@ -67,4 +69,25 @@ const getFavoriteMeal = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
-export { addFavoriteMeal, getFavoriteMeal };
+
+const getMyFavoriteMeals = async (req, res) => {
+  try {
+    const userEmail = req.user.email;
+    console.log("userEmail", userEmail);
+    const favorites = await Favorite.find({ userEmail }).lean();
+
+    if (!favorites.length) {
+      return res
+        .status(200)
+        .json({ message: "favorite meal not found", favorites: [] });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "favorite meal found successfully", favorites });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+export { addFavoriteMeal, getFavoriteMeal, getMyFavoriteMeals };

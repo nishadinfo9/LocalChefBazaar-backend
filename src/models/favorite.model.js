@@ -11,6 +11,10 @@ const favoriteSchema = new Schema(
       type: String,
       required: true,
     },
+    foodImage: {
+      type: String,
+      required: true,
+    },
     mealId: {
       type: String,
       required: true,

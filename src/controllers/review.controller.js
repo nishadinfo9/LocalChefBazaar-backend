@@ -18,6 +18,7 @@ const createReview = async (req, res) => {
     }
 
     const newReview = {
+      userId: userId,
       foodId,
       reviewerName: user.name,
       reviewerImage: user.profileImage || "",
@@ -57,6 +58,24 @@ const getReviews = async (req, res) => {
   }
 };
 
+const getMyReviews = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const reviews = await Review.find({ userId }).sort({ reviewDate: -1 });
+
+    if (!reviews.length) {
+      return res.status(200).json({ message: "review not found", reviews: [] });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "my all review found successfully", reviews });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 const getAllReviews = async (req, res) => {
   try {
     const reviews = await Review.find().sort({ reviewDate: -1 });
@@ -73,4 +92,4 @@ const getAllReviews = async (req, res) => {
   }
 };
 
-export { createReview, getReviews, getAllReviews };
+export { createReview, getReviews, getMyReviews, getAllReviews };
