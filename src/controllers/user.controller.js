@@ -93,6 +93,7 @@ const loggedIn = async (req, res) => {
       httpOnly: true,
       secure: true,
       sameSite: "none",
+      path: "/",
     };
 
     return res
@@ -256,6 +257,7 @@ const refreshToken = async (req, res) => {
       httpOnly: true,
       secure: true,
       sameSite: "none",
+      path: "/",
     };
 
     user.refreshToken = newRefreshToken;
