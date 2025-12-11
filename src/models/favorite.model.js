@@ -3,8 +3,7 @@ import mongoose, { Schema } from "mongoose";
 const favoriteSchema = new Schema(
   {
     chefId: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
+      type: String,
       required: true,
     },
     userEmail: {

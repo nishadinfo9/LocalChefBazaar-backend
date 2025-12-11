@@ -4,6 +4,7 @@ const router = Router();
 import {
   createOrder,
   getMyOrder,
+  getOrderById,
   chefAllOrderRequests,
   updateOrderRequest,
 } from "../controllers/order.controller.js";
@@ -13,6 +14,7 @@ import { isRole } from "../middlewares/role.middleware.js";
 
 router.route("/order/create/:mealId").post(verifyJWT, checkFraud, createOrder);
 router.route("/order/my-orders").get(verifyJWT, checkFraud, getMyOrder);
+router.route("/order/single-orders/:foodId").get(verifyJWT, checkFraud, getOrderById);
 router
   .route("/order/chef-orders")
   .get(verifyJWT, isRole("chef"), checkFraud, chefAllOrderRequests);

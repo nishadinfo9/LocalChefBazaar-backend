@@ -6,8 +6,7 @@ const createOrder = async (req, res) => {
     const { mealId } = req.params;
     const userEmail = req.user.email;
 
-    const { userAddress, quantity, price, orderStatus, mealName, chefId } =
-      req.body;
+    const { userAddress, quantity, price, orderStatus, mealName } = req.body;
 
     const meal = await Meal.findById(mealId);
 
@@ -21,10 +20,9 @@ const createOrder = async (req, res) => {
       const updateOrder = await Order.findByIdAndUpdate(
         existOrder._id,
         {
-          $inc: { quantity: Number(quantity) },
           $set: {
-            totalPrice:
-              (existOrder.quantity + Number(quantity)) * Number(price),
+            quantity: Number(quantity),
+            totalPrice: Number(quantity) * Number(price),
           },
         },
         { new: true }
@@ -81,10 +79,33 @@ const getMyOrder = async (req, res) => {
   }
 };
 
+const getOrderById = async (req, res) => {
+  try {
+    const { foodId } = req.params;
+
+    if (!foodId) {
+      return res.status(409).json({ message: "food id does not exist" });
+    }
+
+    const order = await Order.findOne({ foodId });
+
+    if (!order) {
+      return res.status(401).json({ message: "order not found" });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "single order found successfully", order });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 const chefAllOrderRequests = async (req, res) => {
   try {
-    const userId = req.user._id;
-    const orders = await Order.find({ chefId: userId });
+    const chefId = req.user.chefId;
+    const orders = await Order.find({ chefId });
 
     if (!orders.length) {
       return res
@@ -115,4 +136,10 @@ const updateOrderRequest = async (req, res) => {
     .status(200)
     .json({ message: "order request status update successfully", order });
 };
-export { createOrder, getMyOrder, chefAllOrderRequests, updateOrderRequest };
+export {
+  createOrder,
+  getMyOrder,
+  getOrderById,
+  chefAllOrderRequests,
+  updateOrderRequest,
+};

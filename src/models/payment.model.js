@@ -12,6 +12,8 @@ const paymentSchema = new Schema({
   transactionId: {
     type: String,
     required: true,
+    unique: true,
+    index: true,
   },
   userEmail: {
     type: String,

@@ -62,15 +62,15 @@ const verifyPaymentSession = async (req, res) => {
       return res.status(409).json({ message: "payment not paid" });
     }
 
-    const transactionId = session.id; // *** FIXED ***
+    const transactionId = session.payment_intent;
     const mealId = session.metadata.mealId;
+    const existPayment = await Payment.findOne({ transactionId });
 
-    // Prevent duplicate
-    let payment = await Payment.findOne({ transactionId });
-    if (payment) {
-      return res
-        .status(200)
-        .json({ message: "payment already exist", payment });
+    if (existPayment) {
+      return res.status(200).json({
+        message: "payment already exist",
+        transactionId: existPayment.transactionId,
+      });
     }
 
     const updateOrder = await Order.findOneAndUpdate(
@@ -79,19 +79,30 @@ const verifyPaymentSession = async (req, res) => {
       { new: true }
     );
 
-    payment = await Payment.create({
-      mealId,
-      mealName: updateOrder.mealName,
-      transactionId, // now stable
-      userEmail: session.customer_email,
-      totalPrice: Number((session.amount_total / 100).toFixed(2)),
-      currency: session.currency,
-      paymentStatus: "paid",
-    });
+    try {
+      const payment = await Payment.create({
+        mealId,
+        mealName: updateOrder.mealName,
+        transactionId,
+        userEmail: session.customer_email,
+        totalPrice: Number((session.amount_total / 100).toFixed(2)),
+        currency: session.currency,
+        paymentStatus: "paid",
+      });
 
-    return res
-      .status(201)
-      .json({ message: "payment created successfully", payment });
+      return res
+        .status(201)
+        .json({ message: "payment created successfully", payment });
+    } catch (err) {
+      if (err.code === 11000) {
+        return res.status(200).json({
+          message: "Payment already exists",
+          transactionId: transactionId,
+        });
+      } else {
+        return res.status(400).json({ message: "Payment not completed yet" });
+      }
+    }
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal server error" });

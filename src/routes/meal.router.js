@@ -20,7 +20,7 @@ router
   .get(verifyJWT, isRole("chef"), checkFraud, getMyMeals);
 router
   .route("/meals/single-meal/:mealId")
-  .get(verifyJWT, isRole("chef"), checkFraud, getMealById);
+  .get(verifyJWT, checkFraud, getMealById);
 router
   .route("/meals/delete-meals/:mealId")
   .delete(verifyJWT, isRole("chef"), checkFraud, deleteMeal);
