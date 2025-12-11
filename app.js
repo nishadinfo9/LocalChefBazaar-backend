@@ -8,7 +8,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static("public"));
 
-const allowedOrigins = ["https://localchefbazaar.netlify.app"];
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://localchefbazaar.netlify.app",
+];
 
 app.use(
   cors({
