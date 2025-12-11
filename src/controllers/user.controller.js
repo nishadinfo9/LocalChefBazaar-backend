@@ -93,7 +93,6 @@ const loggedIn = async (req, res) => {
       httpOnly: true,
       secure: true,
       sameSite: "none",
-      domain: "localchefbazaar-backend-production.up.railway.app",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     };
 
@@ -258,7 +257,6 @@ const refreshToken = async (req, res) => {
       httpOnly: true,
       secure: true,
       sameSite: "none",
-      domain: "localchefbazaar-backend-production.up.railway.app",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     };
 
