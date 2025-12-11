@@ -1,5 +1,7 @@
 import { Meal } from "../models/meal.model.js";
 import { Order } from "../models/order.model.js";
+import { Payment } from "../models/payment.model.js";
+import { User } from "../models/user.model.js";
 
 const createOrder = async (req, res) => {
   try {
@@ -136,10 +138,48 @@ const updateOrderRequest = async (req, res) => {
     .status(200)
     .json({ message: "order request status update successfully", order });
 };
+
+const getDashboardStats = async (req, res) => {
+  const statsArr = await Order.aggregate([
+    {
+      $group: {
+        _id: null,
+        totalPaymentAmount: {
+          $sum: {
+            $cond: [{ $eq: ["$paymentStatus", "paid"] }, "$totalPrice", 0],
+          },
+        },
+        pendingOrder: {
+          $sum: {
+            $cond: [{ $eq: ["$orderStatus", "pending"] }, 1, 0],
+          },
+        },
+        deliveredOrders: {
+          $sum: {
+            $cond: [{ $eq: ["$orderStatus", "delivered"] }, 1, 0],
+          },
+        },
+      },
+    },
+  ]);
+
+  const totalUsers = await User.countDocuments();
+
+  const stats = {
+    totalUsers,
+    totalPaymentAmount: statsArr[0].totalPaymentAmount,
+    pendingOrder: statsArr[0].pendingOrder,
+    deliveredOrders: statsArr[0].deliveredOrders,
+  };
+
+  return res.status(200).json({ message: "dashboard", stats });
+};
+
 export {
   createOrder,
   getMyOrder,
   getOrderById,
   chefAllOrderRequests,
   updateOrderRequest,
+  getDashboardStats,
 };

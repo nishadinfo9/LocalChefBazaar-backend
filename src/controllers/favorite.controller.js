@@ -1,6 +1,5 @@
 import { Favorite } from "../models/favorite.model.js";
 import { Meal } from "../models/meal.model.js";
-import { User } from "../models/user.model.js";
 
 const addFavoriteMeal = async (req, res) => {
   try {
