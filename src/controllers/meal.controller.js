@@ -36,22 +36,28 @@ const createMeal = async (req, res) => {
 
 const getAllMeals = async (req, res) => {
   try {
-    const { limit, order } = req.query;
+    const { order, limit, skip } = req.query;
 
     const sortOptions = { price: 1 };
     if (order) {
       sortOptions["price"] = order !== "asce" ? -1 : 1;
     }
 
-    const meals = await Meal.find().sort(sortOptions).limit(limit).lean();
+    const meals = await Meal.find()
+      .sort(sortOptions)
+      .skip(Number(skip || 0))
+      .limit(Number(limit || 0))
+      .lean();
 
     if (!meals.length) {
       return res.status(401).json({ message: "meals not found" });
     }
 
+    const total = await Meal.countDocuments({});
+
     return res
       .status(200)
-      .json({ message: "all meals found successfully", meals });
+      .json({ message: "all meals found successfully", meals, total });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Internal server error" });
