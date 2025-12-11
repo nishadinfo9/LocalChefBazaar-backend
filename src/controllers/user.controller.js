@@ -92,7 +92,6 @@ const loggedIn = async (req, res) => {
     const options = {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     };
 
     return res
@@ -111,7 +110,6 @@ const loggedIn = async (req, res) => {
 
 const logout = async (req, res) => {
   try {
-    console.log("user", req.user);
     const userId = req.user._id;
 
     const user = await User.findById(userId);
@@ -256,7 +254,6 @@ const refreshToken = async (req, res) => {
     const options = {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     };
 
     user.refreshToken = newRefreshToken;
