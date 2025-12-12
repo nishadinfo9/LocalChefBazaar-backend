@@ -8,12 +8,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static("public"));
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://local-chef-bazaar-e1594.web.app",
-  "https://localchefbazaar.netlify.app",
-  "https://chef-bazaar.vercel.app",
-];
+const allowedOrigins = [process.env.DEV_DOMAIN, process.env.DOMAIN];
 
 app.use(
   cors({
@@ -46,5 +41,7 @@ app.use("/api/v1", favoriteMealRoutes);
 app.use("/api/v1", orderRoutes);
 app.use("/api/v1", paymentRoutes);
 app.use("/api/v1", requestRoutes);
+
+console.log(process.env.FRONTEND_URI);
 
 export default app;
