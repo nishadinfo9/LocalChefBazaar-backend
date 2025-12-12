@@ -8,14 +8,18 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static("public"));
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://localchefbazaar.netlify.app",
+  "https://localchefbazaar-backend-production.up.railway.app",
+  "https://chef-bazaar.vercel.app",
+];
+
 app.use(
   cors({
     origin: function (origin, callback) {
-      const allowedOrigins = [
-        "https://localchefbazaar.netlify.app",
-        "http://localhost:5173",
-      ];
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
