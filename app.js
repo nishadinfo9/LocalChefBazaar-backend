@@ -8,18 +8,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static("public"));
 
-const allowedOrigins = [process.env.DEV_DOMAIN, process.env.DOMAIN];
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://localchefbazaar.netlify.app",
+];
 
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: allowedOrigins,
     credentials: true,
   })
 );
@@ -41,7 +37,5 @@ app.use("/api/v1", favoriteMealRoutes);
 app.use("/api/v1", orderRoutes);
 app.use("/api/v1", paymentRoutes);
 app.use("/api/v1", requestRoutes);
-
-console.log(process.env.FRONTEND_URI);
 
 export default app;
