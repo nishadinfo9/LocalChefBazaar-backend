@@ -37,7 +37,7 @@ const createPaymentSession = async (req, res) => {
       ],
       metadata: {
         mealId: mealId,
-        //tracking id
+
       },
       mode: "payment",
       success_url: `${process.env.DOMAIN}/dashboard/payments-success?session_id={CHECKOUT_SESSION_ID}`,

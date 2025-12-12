@@ -56,7 +56,7 @@ const getFavoriteMeal = async (req, res) => {
     const favorite = await Favorite.findOne({ mealId, userEmail });
 
     if (!favorite) {
-      return res.status(404).json({ message: "favorite not found" });
+      return res.status(200).json({ message: "favorite not found" });
     }
 
     return res.status(200).json({
@@ -72,7 +72,6 @@ const getFavoriteMeal = async (req, res) => {
 const getMyFavoriteMeals = async (req, res) => {
   try {
     const userEmail = req.user.email;
-    console.log("userEmail", userEmail);
     const favorites = await Favorite.find({ userEmail }).lean();
 
     if (!favorites.length) {

@@ -4,7 +4,6 @@ import { User } from "../models/user.model.js";
 const createReview = async (req, res) => {
   try {
     const userId = req.user._id;
-    console.log("body", req.body);
     const { rating, comment, reviewDate, foodId } = req.body;
 
     if (!rating || !comment || !foodId) {

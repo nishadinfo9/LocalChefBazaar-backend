@@ -95,16 +95,12 @@ const loggedIn = async (req, res) => {
       sameSite: "none",
     };
 
-    return res
-      .status(200)
-      .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", refreshToken, options)
-      .json({
-        message: "user login successfully",
-        user: loginUser,
-        accessToken,
-        refreshToken,
-      });
+    return res.status(200).cookie("refreshToken", refreshToken, options).json({
+      message: "user login successfully",
+      user: loginUser,
+      accessToken,
+      refreshToken,
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Internal server error" });
@@ -132,11 +128,12 @@ const logout = async (req, res) => {
 };
 
 const getCurrentUser = async (req, res) => {
-  console.log("token", req.headers.authorization);
   try {
+    const accessToken = req.headers?.authorization;
     return res.status(200).json({
       message: "current user found succesfully",
       user: req.user,
+      accessToken,
     });
   } catch (error) {
     console.log(error);
@@ -289,3 +286,5 @@ export {
   isFraudUser,
   refreshToken,
 };
+
+console
