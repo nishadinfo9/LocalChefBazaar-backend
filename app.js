@@ -10,6 +10,7 @@ app.use(express.static("public"));
 
 const allowedOrigins = [
   "http://localhost:5173",
+  "https://local-chef-bazaar-e1594.web.app",
   "https://localchefbazaar.netlify.app",
   "https://chef-bazaar.vercel.app",
 ];
