@@ -132,6 +132,7 @@ const getCurrentUser = async (req, res) => {
     const accessToken = req.headers?.authorization;
     return res.status(200).json({
       message: "current user found succesfully",
+
       user: req.user,
       accessToken,
     });
@@ -255,8 +256,6 @@ const refreshToken = async (req, res) => {
     user.refreshToken = newRefreshToken;
     await user.save({ validateBeforeSave: false });
 
-    console.log("Refresh token called for user:", user._id);
-
     const options = {
       httpOnly: true,
       secure: true,
@@ -286,5 +285,3 @@ export {
   isFraudUser,
   refreshToken,
 };
-
-console
